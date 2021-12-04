@@ -20,7 +20,6 @@ var myMap = L.map("map", {
   layers: [baseMap]
 });
 
-// Create a function to get a different color depending on the magnitude
 function getColor(magnitude){
   switch (true) {
     case magnitude >= 0 && magnitude < 1:
@@ -38,7 +37,7 @@ function getColor(magnitude){
     default:
       return "#000000";
   };
-};
+ };
 
 // Perform a GET request to the query URL
 d3.json(queryUrl).then(function(data) {
@@ -53,10 +52,10 @@ d3.json(queryUrl).then(function(data) {
     fillColor: getColor(site.properties.mag),
     color: "#000000",
     weight: "1",
-    // Adjust radius
-    radius: site.properties.mag * 25000
-    // Add the pop up
-    }).bindPopup("<h1>" + "Location: " + site.properties.place + "</h1>" + "<h1>" + "Magnitude: " + site.properties.mag + "</h1>").addTo(myMap);
+   // Adjust radius
+   radius: site.properties.mag * 25000
+   // Add the pop up
+   }).bindPopup("<h1>" + "Location: " + site.properties.place + "</h1>" + "<h1>" + "Magnitude: " + site.properties.mag + "</h1>").addTo(myMap);
   });
 
   // Add a legend
@@ -73,7 +72,18 @@ d3.json(queryUrl).then(function(data) {
     return div;
   };
   legend.addTo(myMap);
-
 });
 
+// Use this link to get the geojson data.
+var link = "static/js/GeoJSON/PB2002_boundaries.json";
+// Grabbing our GeoJSON data..
+d3.json(link).then(function(data) {
+  // Creating a GeoJSON layer with the retrieved data
+  var fault_lines = L.geoJson(data, {
+    color: "#ff9900",
+    weight: 2
+  });
+  // Add the the map
+  fault_lines.addTo(myMap);
+});
 
