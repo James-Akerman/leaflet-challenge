@@ -43,7 +43,16 @@ function getColor(magnitude){
   };
  };
 
-//  Define greyscale layer
+// Define the map layers
+var satelliteMap = L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
+  attribution: "© <a href='https://www.mapbox.com/about/maps/'>Mapbox</a> © <a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a> <strong><a href='https://www.mapbox.com/map-feedback/' target='_blank'>Improve this map</a></strong>",
+  tileSize: 512,
+  maxZoom: 18,
+  zoomOffset: -1,
+  id: "mapbox/satellite-streets-v10",
+  accessToken: API_KEY
+});
+
 var greyscaleMap = L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
   attribution: "© <a href='https://www.mapbox.com/about/maps/'>Mapbox</a> © <a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a> <strong><a href='https://www.mapbox.com/map-feedback/' target='_blank'>Improve this map</a></strong>",
   tileSize: 512,
@@ -53,12 +62,12 @@ var greyscaleMap = L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/
   accessToken: API_KEY
 });
 
-var darkMap = L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
+var outdoorsMap = L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
   attribution: "© <a href='https://www.mapbox.com/about/maps/'>Mapbox</a> © <a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a> <strong><a href='https://www.mapbox.com/map-feedback/' target='_blank'>Improve this map</a></strong>",
   tileSize: 512,
   maxZoom: 18,
   zoomOffset: -1,
-  id: "mapbox/dark-v10",
+  id: "mapbox/outdoors-v10",
   accessToken: API_KEY
 });
 
@@ -68,13 +77,14 @@ var myMap = L.map("map", {
     37.09, -108.71
   ],
   zoom: 5,
-  layers: [greyscaleMap, darkMap]
+  layers: [satelliteMap, greyscaleMap, outdoorsMap]
 });
 
 // Define a baseMaps object to hold our base layers
 var baseMaps = {
-  "Greyscale Map": greyscaleMap,
-  "Dark Map": darkMap
+  "Satellite": satelliteMap,
+  "Greyscale": greyscaleMap,
+  "Outdoors": outdoorsMap
 };
 
 
@@ -108,5 +118,4 @@ legend.onAdd = function (map) {
     return div;
 };
 legend.addTo(myMap);
-
 
