@@ -9,38 +9,25 @@ d3.json(queryUrl).then(function(data) {
 function createFeatures(earthquakeData){
 
   function onEachFeatureNew(feature, layer) {
-    var longitude = feature.geometry.coordinates[0];
-    var latitude = feature.geometry.coordinates[1];
-    var newIcon = L.circle([latitude, longitude], {
-      fillOpacity: 0.75,
-      fillColor: getColor(feature.properties.mag),
-      color: "#000000",
-      weight: "1",
-     // Adjust radius
-     radius: feature.properties.mag * 25000
-     });
-   
     layer.bindPopup("<h1>" + "Location: " + feature.properties.place + "</h1>" + "<h1>" + "Magnitude: " + feature.properties.mag + "</h1>");
   }
 
-  var geojsonMarkerOptions = {
-    radius: 20,
-    fillColor: "#000000",
-    color: "#000",
-    weight: 1,
-    opacity: 1,
-    fillOpacity: 0.8
-};
-
   var earthquakes = L.geoJSON(earthquakeData, {
-    pointToLayer: function (feature, latlng) {
-      return L.circleMarker(latlng, geojsonMarkerOptions);
+    pointToLayer: function (data, latlng) {
+      return L.circleMarker(latlng, {
+        fillOpacity: 0.75,
+        fillColor: getColor(data.properties.mag),
+        color: "#000000",
+        weight: "1",
+       // Adjust radius
+       radius: data.properties.mag * 10
+      })
     },
     onEachFeature: onEachFeatureNew
   });
 
-   // Sending our earthquakes layer to the createMap function
-   createMap(earthquakes);
+  // Sending our earthquakes layer to the createMap function
+  createMap(earthquakes);
 
 };
 
