@@ -3,25 +3,45 @@ var queryUrl = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_da
 
 // Perform a GET request to the query URL
 d3.json(queryUrl).then(function(data) {
-  var earthquake_data = data.features;
-  getEarthquakeLayer(earthquake_data);
+  createFeatures(data.features);
 });
 
-// Get the earthquake cricle layer
-function getEarthquakeLayer(data){
-  data.forEach(function(site){
-    var longitude = site.geometry.coordinates[0];
-    var latitude = site.geometry.coordinates[1];
-    var location = L.circle([latitude, longitude], {
+function createFeatures(earthquakeData){
+
+  function onEachFeatureNew(feature, layer) {
+    var longitude = feature.geometry.coordinates[0];
+    var latitude = feature.geometry.coordinates[1];
+    var newIcon = L.circle([latitude, longitude], {
       fillOpacity: 0.75,
-      fillColor: getColor(site.properties.mag),
+      fillColor: getColor(feature.properties.mag),
       color: "#000000",
       weight: "1",
      // Adjust radius
-     radius: site.properties.mag * 25000
+     radius: feature.properties.mag * 25000
      });
-    location.bindPopup("<h1>" + "Location: " + site.properties.place + "</h1>" + "<h1>" + "Magnitude: " + site.properties.mag + "</h1>").addTo(myMap);
+   
+    layer.bindPopup("<h1>" + "Location: " + feature.properties.place + "</h1>" + "<h1>" + "Magnitude: " + feature.properties.mag + "</h1>");
+  }
+
+  var geojsonMarkerOptions = {
+    radius: 20,
+    fillColor: "#000000",
+    color: "#000",
+    weight: 1,
+    opacity: 1,
+    fillOpacity: 0.8
+};
+
+  var earthquakes = L.geoJSON(earthquakeData, {
+    pointToLayer: function (feature, latlng) {
+      return L.circleMarker(latlng, geojsonMarkerOptions);
+    },
+    onEachFeature: onEachFeatureNew
   });
+
+   // Sending our earthquakes layer to the createMap function
+   createMap(earthquakes);
+
 };
 
 function getColor(magnitude){
@@ -43,55 +63,60 @@ function getColor(magnitude){
   };
  };
 
-// Define the map layers
-var satelliteMap = L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
-  attribution: "© <a href='https://www.mapbox.com/about/maps/'>Mapbox</a> © <a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a> <strong><a href='https://www.mapbox.com/map-feedback/' target='_blank'>Improve this map</a></strong>",
-  tileSize: 512,
-  maxZoom: 18,
-  zoomOffset: -1,
-  id: "mapbox/satellite-streets-v10",
-  accessToken: API_KEY
-});
+ function createMap(earthquakes){
+   // Define the map layers
+  var satelliteMap = L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
+    attribution: "© <a href='https://www.mapbox.com/about/maps/'>Mapbox</a> © <a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a> <strong><a href='https://www.mapbox.com/map-feedback/' target='_blank'>Improve this map</a></strong>",
+    tileSize: 512,
+    maxZoom: 18,
+    zoomOffset: -1,
+    id: "mapbox/satellite-streets-v10",
+    accessToken: API_KEY
+  });
 
-var greyscaleMap = L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
-  attribution: "© <a href='https://www.mapbox.com/about/maps/'>Mapbox</a> © <a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a> <strong><a href='https://www.mapbox.com/map-feedback/' target='_blank'>Improve this map</a></strong>",
-  tileSize: 512,
-  maxZoom: 18,
-  zoomOffset: -1,
-  id: "mapbox/light-v10",
-  accessToken: API_KEY
-});
+  var greyscaleMap = L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
+    attribution: "© <a href='https://www.mapbox.com/about/maps/'>Mapbox</a> © <a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a> <strong><a href='https://www.mapbox.com/map-feedback/' target='_blank'>Improve this map</a></strong>",
+    tileSize: 512,
+    maxZoom: 18,
+    zoomOffset: -1,
+    id: "mapbox/light-v10",
+    accessToken: API_KEY
+  });
 
-var outdoorsMap = L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
-  attribution: "© <a href='https://www.mapbox.com/about/maps/'>Mapbox</a> © <a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a> <strong><a href='https://www.mapbox.com/map-feedback/' target='_blank'>Improve this map</a></strong>",
-  tileSize: 512,
-  maxZoom: 18,
-  zoomOffset: -1,
-  id: "mapbox/outdoors-v10",
-  accessToken: API_KEY
-});
+  var outdoorsMap = L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
+    attribution: "© <a href='https://www.mapbox.com/about/maps/'>Mapbox</a> © <a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a> <strong><a href='https://www.mapbox.com/map-feedback/' target='_blank'>Improve this map</a></strong>",
+    tileSize: 512,
+    maxZoom: 18,
+    zoomOffset: -1,
+    id: "mapbox/outdoors-v10",
+    accessToken: API_KEY
+  });
 
-// Create our map
-var myMap = L.map("map", {
-  center: [
-    37.09, -108.71
-  ],
-  zoom: 5,
-  layers: [satelliteMap, greyscaleMap, outdoorsMap]
-});
+  // Create our map
+  var myMap = L.map("map", {
+    center: [
+      37.09, -108.71
+    ],
+    zoom: 5,
+    layers: [satelliteMap, greyscaleMap, outdoorsMap, earthquakes]
+  });
 
-// Define a baseMaps object to hold our base layers
-var baseMaps = {
-  "Satellite": satelliteMap,
-  "Greyscale": greyscaleMap,
-  "Outdoors": outdoorsMap
-};
+  // Define a baseMaps object to hold our base layers
+  var baseMaps = {
+    "Satellite": satelliteMap,
+    "Greyscale": greyscaleMap,
+    "Outdoors": outdoorsMap
+  };
+
+  var overlayMaps = {
+    "Earthquakes": earthquakes
+  };
 
 
-// Use this link to get the geojson data.
-var link = "static/js/GeoJSON/PB2002_boundaries.json";
-// Grabbing our GeoJSON data..
-d3.json(link).then(function(data) {
+  // Use this link to get the geojson data.
+  var link = "static/js/GeoJSON/PB2002_boundaries.json";
+  // Grabbing our GeoJSON data..
+  d3.json(link).then(function(data) {
   // Creating a GeoJSON layer with the retrieved data
   var fault_lines = L.geoJson(data, {
     color: "#ff9900",
@@ -99,14 +124,14 @@ d3.json(link).then(function(data) {
   });
   // Add the the map
   fault_lines.addTo(myMap);
-});
+  });
 
-L.control.layers(baseMaps).addTo(myMap);
+  // Add layer
+  L.control.layers(baseMaps, overlayMaps).addTo(myMap);
 
-
-// Add a legend
-var legend = L.control({position: 'bottomright'});
-legend.onAdd = function (map) {
+  // Add a legend
+  var legend = L.control({position: 'bottomright'});
+  legend.onAdd = function (map) {
   var div = L.DomUtil.create('div', 'info legend'),
   magnitude_tiers = [0,1,2,3,4,5]
   // loop through our density intervals and generate a label with a colored square for each interval
@@ -116,6 +141,7 @@ legend.onAdd = function (map) {
             magnitude_tiers[i] + (magnitude_tiers[i + 1] ? '&ndash;' + magnitude_tiers[i + 1] + '<br>' : '+');
     }
     return div;
-};
-legend.addTo(myMap);
+  };
+  legend.addTo(myMap);
 
+};
