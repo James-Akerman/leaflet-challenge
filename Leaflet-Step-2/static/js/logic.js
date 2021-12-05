@@ -7,28 +7,28 @@ d3.json(queryUrl).then(function(data) {
 });
 
 function createFeatures(earthquakeData){
-
-  function onEachFeatureNew(feature, layer) {
-    layer.bindPopup("<h1>" + "Location: " + feature.properties.place + "</h1>" + "<h1>" + "Magnitude: " + feature.properties.mag + "</h1>");
+  function onEachFeature(feature, layer) {
+    layer.bindPopup("<h3>" + "Location: " + feature.properties.place + "</h3>" + 
+    "<h3>" + "Magnitude: " + feature.properties.mag + "</h3>");
   }
 
-  var earthquakes = L.geoJSON(earthquakeData, {
-    pointToLayer: function (data, latlng) {
-      return L.circleMarker(latlng, {
+  var earthquakes = L.geoJSON(earthquakeData, { 
+      pointToLayer: function (data, latlng) {
+      return L.circleMarker(latlng, 
+        {
         fillOpacity: 0.75,
         fillColor: getColor(data.properties.mag),
-        color: "#000000",
-        weight: "1",
+        // Remove the circle marker border
+        weight: "0",
        // Adjust radius
-       radius: data.properties.mag * 10
-      })
+       radius: data.properties.mag * 6
+      });
     },
-    onEachFeature: onEachFeatureNew
+    onEachFeature: onEachFeature
   });
 
   // Sending our earthquakes layer to the createMap function
   createMap(earthquakes);
-
 };
 
 function getColor(magnitude){
@@ -81,9 +81,7 @@ function getColor(magnitude){
 
   // Create our map
   var myMap = L.map("map", {
-    center: [
-      37.09, -108.71
-    ],
+    center: [ 37.09, -108.71 ],
     zoom: 5,
     layers: [satelliteMap, greyscaleMap, outdoorsMap, earthquakes]
   });
@@ -95,11 +93,6 @@ function getColor(magnitude){
     "Outdoors": outdoorsMap
   };
 
-  var overlayMaps = {
-    "Earthquakes": earthquakes
-  };
-
-
   // Use this link to get the geojson data.
   var link = "static/js/GeoJSON/PB2002_boundaries.json";
   // Grabbing our GeoJSON data..
@@ -108,13 +101,16 @@ function getColor(magnitude){
   var fault_lines = L.geoJson(data, {
     color: "#ff9900",
     weight: 2
-  });
-  // Add the the map
-  fault_lines.addTo(myMap);
+    });
+    // Add the overlay Maps
+    var overlayMaps = {
+      "Earthquakes": earthquakes,
+      "Faultlines": fault_lines
+    };
+    // Add layer
+    L.control.layers(baseMaps, overlayMaps).addTo(myMap);
   });
 
-  // Add layer
-  L.control.layers(baseMaps, overlayMaps).addTo(myMap);
 
   // Add a legend
   var legend = L.control({position: 'bottomright'});
