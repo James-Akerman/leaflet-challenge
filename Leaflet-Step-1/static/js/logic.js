@@ -56,7 +56,9 @@ d3.json(queryUrl).then(function(data) {
     // Adjust radius
     radius: site.properties.mag * 25000
     // Add the pop up
-    }).bindPopup("<h1>" + "Location: " + site.properties.place + "</h1>" + "<h1>" + "Magnitude: " + site.properties.mag + "</h1>").addTo(myMap);
+    }).bindPopup("<h3>" + "<strong>" + "Magnitude: " + "</strong>" + site.properties.mag + "</h3>" +
+      "<h3>" + "<strong>" + "Location: " + "</strong>" + site.properties.place + "</h3>" + 
+    "<h3>" + "<strong>" + "Latitude and Longitude: " + "</strong>" + latitude + ", " + longitude + "</h3>").addTo(myMap);
   });
 
   // Add a legend
@@ -67,13 +69,11 @@ d3.json(queryUrl).then(function(data) {
     // loop through our density intervals and generate a label with a colored square for each interval
     for (var i = 0; i < magnitude_tiers.length; i++) {
         div.innerHTML +=
-            '<i style="background:' + getColor(magnitude_tiers[i]) + '"></i> ' +
-            magnitude_tiers[i] + (magnitude_tiers[i + 1] ? '&ndash;' + magnitude_tiers[i + 1] + '<br>' : '+');
+            '<i style="background:' + getColor(magnitude_tiers[i]) + '"></i> ' + magnitude_tiers[i] 
+            + (magnitude_tiers[i + 1] ? '&ndash;' + magnitude_tiers[i + 1] + '<br>' : '+');
     }
     return div;
   };
   legend.addTo(myMap);
 
 });
-
-

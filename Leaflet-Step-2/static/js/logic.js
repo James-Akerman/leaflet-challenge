@@ -7,10 +7,14 @@ d3.json(queryUrl).then(function(data) {
 });
 
 function createFeatures(earthquakeData){
+
   function onEachFeature(feature, layer) {
-    layer.bindPopup("<h3>" + "Location: " + feature.properties.place + "</h3>" + 
-    "<h3>" + "Magnitude: " + feature.properties.mag + "</h3>");
-  }
+    var longitude = feature.geometry.coordinates[0]
+    var latitude = feature.geometry.coordinates[1]
+    layer.bindPopup("<h3>" + "<strong>" + "Magnitude: " + "</strong>" + feature.properties.mag + "</h3>" +
+    "<h3>" + "<strong>" + "Location: " + "</strong>" + feature.properties.place + "</h3>" + 
+    "<h3>" + "<strong>" + "Latitude and Longitude: " + "</strong>" + latitude + ", " + longitude + "</h3>");
+  };
 
   var earthquakes = L.geoJSON(earthquakeData, { 
       pointToLayer: function (data, latlng) {
@@ -86,7 +90,7 @@ function getColor(magnitude){
   // Creating a GeoJSON layer with the retrieved data
   var fault_lines = L.geoJson(data, {
     color: "#ff9900",
-    weight: 2
+    weight: 3
   });
   
   // Add the overlay Maps
