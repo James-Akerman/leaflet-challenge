@@ -79,20 +79,6 @@ function getColor(magnitude){
     accessToken: API_KEY
   });
 
-  // Create our map
-  var myMap = L.map("map", {
-    center: [ 37.09, -108.71 ],
-    zoom: 5,
-    layers: [satelliteMap, greyscaleMap, outdoorsMap, earthquakes]
-  });
-
-  // Define a baseMaps object to hold our base layers
-  var baseMaps = {
-    "Satellite": satelliteMap,
-    "Greyscale": greyscaleMap,
-    "Outdoors": outdoorsMap
-  };
-
   // Use this link to get the geojson data.
   var link = "static/js/GeoJSON/PB2002_boundaries.json";
   // Grabbing our GeoJSON data..
@@ -101,30 +87,44 @@ function getColor(magnitude){
   var fault_lines = L.geoJson(data, {
     color: "#ff9900",
     weight: 2
-    });
-    // Add the overlay Maps
-    var overlayMaps = {
-      "Earthquakes": earthquakes,
-      "Faultlines": fault_lines
+  });
+  
+  // Add the overlay Maps
+  var overlayMaps = {
+    "Earthquakes": earthquakes,
+    "Faultlines": fault_lines
+  };
+
+  // Define a baseMaps object to hold our base layers
+  var baseMaps = {
+      "Satellite": satelliteMap,
+      "Greyscale": greyscaleMap,
+      "Outdoors": outdoorsMap
     };
-    // Add layer
-    L.control.layers(baseMaps, overlayMaps).addTo(myMap);
+
+  // Create our map
+  var myMap = L.map("map", {
+      center: [ 37.09, -108.71 ],
+      zoom: 5,
+      layers: [satelliteMap, greyscaleMap, outdoorsMap, earthquakes, fault_lines]
   });
 
+  // Add layer
+  L.control.layers(baseMaps, overlayMaps).addTo(myMap);
 
   // Add a legend
   var legend = L.control({position: 'bottomright'});
   legend.onAdd = function (map) {
-  var div = L.DomUtil.create('div', 'info legend'),
-  magnitude_tiers = [0,1,2,3,4,5]
-  // loop through our density intervals and generate a label with a colored square for each interval
-  for (var i = 0; i < magnitude_tiers.length; i++) {
-        div.innerHTML +=
-            '<i style="background:' + getColor(magnitude_tiers[i]) + '"></i> ' +
-            magnitude_tiers[i] + (magnitude_tiers[i + 1] ? '&ndash;' + magnitude_tiers[i + 1] + '<br>' : '+');
-    }
+    var div = L.DomUtil.create('div', 'info legend'),
+    magnitude_tiers = [0,1,2,3,4,5]
+    // loop through our density intervals and generate a label with a colored square for each interval
+    for (var i = 0; i < magnitude_tiers.length; i++) {
+      div.innerHTML +=
+          '<i style="background:' + getColor(magnitude_tiers[i]) + '"></i> ' +
+          magnitude_tiers[i] + (magnitude_tiers[i + 1] ? '&ndash;' + magnitude_tiers[i + 1] + '<br>' : '+');
+      }
     return div;
-  };
-  legend.addTo(myMap);
-
+    };
+    legend.addTo(myMap);
+  });
 };
