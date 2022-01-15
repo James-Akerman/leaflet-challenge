@@ -1,8 +1,8 @@
 # usgs-earthquake-mapping
 
+This project builds two webpages which show earthquake activity 
 
-### Background
-For this Monash Data Analytics Boot Camp/Trilogy Education Services homework, I imaged that I'd just been accepted as a new hire for the United States Geological Survey, or USGS for short. 
+This project uses geological data provided by the United States Geological Survey, or USGS for short, and mapping data from [Mapbox](https://www.mapbox.com/) to 
 
 The USGS was interested in building a new set of tools that will allow them visualise their earthquake data. They collect a massive amount of data from all over the world each day, but they lack a meaningful way of displaying it. Their hope was that being able to visualise their data will allow them to better educate the public and other government organisations (and hopefully secure more funding..) on issues facing our planet, and it was my task to help them with this project.
 
