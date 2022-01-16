@@ -1,5 +1,6 @@
 # Usgs Earthquake Mapping
 
+## Overview of the Project
 This project contains two webpages which show earthquake activity during the past day using geological data provided by the United States Geological Survey (USGS) via api calls and mapping data from [Mapbox](https://www.mapbox.com/).
 
 The first webpage is a basic map of earthquake activity from the past day.
