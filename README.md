@@ -6,6 +6,8 @@ The first webpage is a basic map of earthquake activity from the past day.
 
 ![earthquake-map-version-1-image](images/earthquake-map-version-1.PNG)
 
+<br>
+
 The second webpage is an interactive map of earthquake activity from the past day. It allows users to view earthquake activity using three different kinds of maps: Satellite, Greyscale, and Outdoors, as well as a map of world tectonic plates using data provided by https://github.com/fraxen/tectonicplates.
 
 ![earthquake-map-version-1-image](images/earthquake-map-version-1.PNG)
