@@ -12,7 +12,7 @@ The second webpage is an interactive map of earthquake activity from the past da
 
 ![earthquake-map-version-1-image](images/earthquake-map-version-1.PNG)
 
-
+<br>
 
 ## Tools/Packages used
 - HMTL5
@@ -21,7 +21,7 @@ The second webpage is an interactive map of earthquake activity from the past da
 - Javascript
   - Leaflet.js
 
-
+<br>
 
 ## How to use
 1) Clone the directory.
